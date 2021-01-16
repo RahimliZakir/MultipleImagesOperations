@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "jquery@3.5.1",
+      "destination": "wwwroot/libs/jquery/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "bootstrap@4.5.3",
+      "destination": "wwwroot/libs/bootstrap/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "tilt.js@1.2.1",
+      "destination": "wwwroot/libs/tilt.js/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "font-awesome@5.15.1",
+      "destination": "wwwroot/libs/font-awesome/"
+    }
+  ]
+}

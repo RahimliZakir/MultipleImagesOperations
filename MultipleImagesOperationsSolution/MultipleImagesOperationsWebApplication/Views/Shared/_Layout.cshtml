@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Layout = "Layout";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title / @ViewBag.Layout</title>
+    @RenderSection("css", required: false)
+    <link href="~/libs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/libs/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="~/libs/multiply-image-input/imager.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="~/assets/favicon/shop-favicon.png" type="image/x-icon">
+</head>
+<body>
+
+    @RenderBody()
+
+    <script src="~/libs/jquery/dist/jquery.min.js"></script>
+    <script src="~/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/libs/tilt.js/tilt.jquery.min.js"></script>
+    <script src="~/libs/font-awesome/js/all.min.js"></script>
+    <script src="~/libs/multiply-image-input/imager.js"></script>
+    <script src="~/libs/multiply-image-input/jquery.image-input.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

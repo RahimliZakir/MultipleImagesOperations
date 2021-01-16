@@ -1,0 +1,107 @@
+﻿@model IEnumerable<MultipleImagesOperationsWebApplication.Models.Entity.Product>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+@section css {
+    <style>
+        .img-div {
+            width: 100%;
+        }
+
+            .img-div > img {
+                height: 250px;
+                object-fit: cover;
+            }
+
+        .card-body {
+            text-align: center;
+        }
+
+        .icons-div {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .icons-div a {
+            display: inline-block;
+            font-size: 1.2rem;
+        }
+
+            .icons-div a:nth-of-type(1) {
+                color: green;
+            }
+
+            .icons-div a:nth-of-type(2) {
+                color: teal;
+                margin: 0 15px;
+            }
+
+            .icons-div a:nth-of-type(3) {
+                color: red;
+            }
+
+            .create-div {
+                padding: 10px 0 0 10px
+            }
+    </style>
+}
+
+<div class="create-div">
+    <a asp-controller="Products" asp-action="Create" style="display: inline-block; font-size: 2rem; color: white; background-color: orangered; padding: 2.5px 10px; border-radius: 5px;"><i class="fas fa-plus"></i></a>
+</div>
+
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImagePath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShortDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeletedDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>*@
+
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-4 mb-4">
+                <div class="card" style="width: 21rem;">
+                    <div class="img-div">
+                        <img src="~/assets/images/@item.ImagePath" class="card-img-top" alt="Multiple">
+                    </div>
+                    <div class="icons-div">
+                        <a asp-controller="Products" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pencil-alt"></i></a>
+                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle"></i></a>
+                        <a asp-controller="Products" asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">@Extension.ToEllipseText(item.ShortDescription)</p>
+                        <a class="btn btn-warning" style="cursor: progress;">@item.Category.Name</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@*</table>*@
