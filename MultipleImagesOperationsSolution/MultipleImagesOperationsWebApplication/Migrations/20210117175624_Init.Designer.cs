@@ -10,8 +10,8 @@ using MultipleImagesOperationsWebApplication.Models.DataContext;
 namespace MultipleImagesOperationsWebApplication.Migrations
 {
     [DbContext(typeof(MultipleDbContext))]
-    [Migration("20210116065258_InitCategoryWithin")]
-    partial class InitCategoryWithin
+    [Migration("20210117175624_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -68,12 +68,17 @@ namespace MultipleImagesOperationsWebApplication.Migrations
                     b.Property<bool>("IsMain")
                         .HasColumnType("bit");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductImages");
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("MultipleImagesOperationsWebApplication.Models.Entity.Product", b =>
@@ -113,6 +118,17 @@ namespace MultipleImagesOperationsWebApplication.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("MultipleImagesOperationsWebApplication.Models.Entity.Images", b =>
+                {
+                    b.HasOne("MultipleImagesOperationsWebApplication.Models.Entity.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("MultipleImagesOperationsWebApplication.Models.Entity.Product", b =>
                 {
                     b.HasOne("MultipleImagesOperationsWebApplication.Models.Entity.Category", "Category")
@@ -127,6 +143,11 @@ namespace MultipleImagesOperationsWebApplication.Migrations
             modelBuilder.Entity("MultipleImagesOperationsWebApplication.Models.Entity.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("MultipleImagesOperationsWebApplication.Models.Entity.Product", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

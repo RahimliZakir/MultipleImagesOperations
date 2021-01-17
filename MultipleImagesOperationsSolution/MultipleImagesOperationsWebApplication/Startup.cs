@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MultipleImagesOperationsWebApplication.AppCode.Providers;
 using MultipleImagesOperationsWebApplication.Models.DataContext;
 
 namespace MultipleImagesOperationsWebApplication
@@ -31,7 +32,10 @@ namespace MultipleImagesOperationsWebApplication
                 cfg.UseSqlServer(conf.GetConnectionString("zString"));
             });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(cfg =>
+            {
+                cfg.ModelBinderProviders.Insert(0, new BooleanBinderProvider());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

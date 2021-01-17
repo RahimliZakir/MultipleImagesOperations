@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +15,11 @@ namespace MultipleImagesOperationsWebApplication.Controllers
     public class ProductsController : Controller
     {
         private readonly MultipleDbContext db;
-
-        public ProductsController(MultipleDbContext db)
+        readonly IWebHostEnvironment env;
+        public ProductsController(MultipleDbContext db, IWebHostEnvironment env)
         {
             this.db = db;
+            this.env = env;
         }
 
         // GET: Products
@@ -48,7 +51,7 @@ namespace MultipleImagesOperationsWebApplication.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(db.Categories, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(db.Categories, "Id", "Name");
             return View();
         }
 
@@ -57,15 +60,35 @@ namespace MultipleImagesOperationsWebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,ImagePath,ShortDescription,CategoryId,Id,CreatedDate,UpdatedDate,DeletedDate")] Product product)
+        public async Task<IActionResult> Create([Bind("Files, Name,ImagePath,ShortDescription,CategoryId,Id,CreatedDate,UpdatedDate,DeletedDate")] Product product)
         {
+            product.Images = new List<Images>();
+
+            foreach (var item in product.Files)
+            {
+                var ext = Path.GetExtension(item.File.FileName);
+                var fileName = $"prod-{Guid.NewGuid().ToString().Replace("-", "")}{ext}";
+                var fullPath = Path.Combine(env.WebRootPath, "uploads", "product-images", fileName);
+
+                using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+                {
+                    item.File.CopyTo(fs);
+                }
+
+                product.Images.Add(new Images
+                {
+                    IsMain = item.IsMain,
+                    ImagePath = fileName
+                });
+            }
+
             if (ModelState.IsValid)
             {
                 db.Add(product);
                 await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(db.Categories, "Id", "Id", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(db.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -77,12 +100,19 @@ namespace MultipleImagesOperationsWebApplication.Controllers
                 return NotFound();
             }
 
-            var product = await db.Products.FindAsync(id);
+            // Lazy - loading
+
+            var product = await db.Products
+                .Include(i => i.Images)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(db.Categories, "Id", "Id", product.CategoryId);
+
+            ViewData["CategoryId"] = new SelectList(db.Categories, "Id", "Name", product.CategoryId);
+
             return View(product);
         }
 
@@ -91,8 +121,10 @@ namespace MultipleImagesOperationsWebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,ImagePath,ShortDescription,CategoryId,Id,CreatedDate,UpdatedDate,DeletedDate")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Name, Files,ShortDescription,CategoryId,Id,CreatedDate,UpdatedDate,DeletedDate")] Product product)
         {
+            // product.UpdatedDate = DateTime.UtcNow.AddHours(4);
+
             if (id != product.Id)
             {
                 return NotFound();
@@ -102,6 +134,59 @@ namespace MultipleImagesOperationsWebApplication.Controllers
             {
                 try
                 {
+                    product.Images = new List<Images>();
+
+                    var entity = db.Products.AsNoTracking().Where(p => p.Id == id);
+
+                    if (entity == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var images = db.Images.Where(i => i.ProductId == id).ToList();
+
+                    foreach (var item in images)
+                    {
+                        if (product.Files.Any(f => f.File == null && string.IsNullOrWhiteSpace(f.TempPath)
+                        && f.Id == item.Id))
+                        {
+                            db.Images.Remove(item);
+
+                            var fullPath = Path.Combine(env.WebRootPath, "uploads", "product-images", item.ImagePath);
+
+                            if (System.IO.File.Exists(fullPath))
+                            {
+                                System.IO.File.Delete(fullPath);
+                            }
+                        }
+                        else if (product.Files.Any(i => i.Id == item.Id && i.IsMain == true))
+                        {
+                            item.IsMain = true;
+                        }
+                        else
+                        {
+                            item.IsMain = false;
+                        }
+                    }
+
+                    foreach (var item in product.Files.Where(f => f.File != null))
+                    {
+                        var ext = Path.GetExtension(item.File.FileName);
+                        var fileName = $"prod-{Guid.NewGuid().ToString().Replace("-", "")}{ext}";
+                        var fullPath = Path.Combine(env.WebRootPath, "uploads", "product-images", fileName);
+
+                        using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+                        {
+                            item.File.CopyTo(fs);
+                        }
+
+                        product.Images.Add(new Images
+                        {
+                            IsMain = item.IsMain,
+                            ImagePath = fileName
+                        });
+                    }
+
                     db.Update(product);
                     await db.SaveChangesAsync();
                 }
@@ -118,7 +203,7 @@ namespace MultipleImagesOperationsWebApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(db.Categories, "Id", "Id", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(db.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
 

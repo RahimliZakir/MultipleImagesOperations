@@ -76,7 +76,7 @@ namespace MultipleImagesOperationsWebApplication.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("MultipleImagesOperationsWebApplication.Models.Entity.Product", b =>

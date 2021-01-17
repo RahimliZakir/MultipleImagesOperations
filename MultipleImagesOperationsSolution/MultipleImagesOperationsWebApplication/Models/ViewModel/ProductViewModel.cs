@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MultipleImagesOperationsWebApplication.Models.ViewModel
 {
-    public class XViewModel
+    public class ProductViewModel
     {
         public int Id { get; set; }
 
