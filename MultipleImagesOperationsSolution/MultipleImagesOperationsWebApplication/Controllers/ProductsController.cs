@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MultipleImagesOperationsWebApplication.Models.DataContext;
 using MultipleImagesOperationsWebApplication.Models.Entity;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MultipleImagesOperationsWebApplication.Controllers
 {
@@ -25,7 +25,7 @@ namespace MultipleImagesOperationsWebApplication.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var multipleDbContext = db.Products.Include(p => p.Category);
+            var multipleDbContext = db.Products.Include(p => p.Category).Include(i => i.Images);
             return View(await multipleDbContext.ToListAsync());
         }
 
@@ -39,6 +39,7 @@ namespace MultipleImagesOperationsWebApplication.Controllers
 
             var product = await db.Products
                 .Include(p => p.Category)
+                .Include(i => i.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -123,8 +124,6 @@ namespace MultipleImagesOperationsWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Name, Files,ShortDescription,CategoryId,Id,CreatedDate,UpdatedDate,DeletedDate")] Product product)
         {
-            // product.UpdatedDate = DateTime.UtcNow.AddHours(4);
-
             if (id != product.Id)
             {
                 return NotFound();
@@ -186,6 +185,8 @@ namespace MultipleImagesOperationsWebApplication.Controllers
                             ImagePath = fileName
                         });
                     }
+
+                    product.UpdatedDate = DateTime.UtcNow.AddHours(4);
 
                     db.Update(product);
                     await db.SaveChangesAsync();

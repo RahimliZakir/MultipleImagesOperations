@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MultipleImagesOperationsWebApplication.Models.Entity.Product>
+﻿@model IEnumerable<Product>
 
 @{
     ViewData["Title"] = "Home";
@@ -87,7 +87,7 @@
             <div class="col-4 mb-4">
                 <div class="card" style="width: 21rem;">
                     <div class="img-div">
-                        <img src="~/assets/images/@item.ImagePath" class="card-img-top" alt="Multiple">
+                        <img src="~/uploads/product-images/@item.Images.FirstOrDefault(i=>i.IsMain == true).ImagePath" class="card-img-top" alt="Multiple">
                     </div>
                     <div class="icons-div">
                         <a asp-controller="Products" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pencil-alt"></i></a>
@@ -105,3 +105,15 @@
     </div>
 </div>
 @*</table>*@
+
+@section scripts {
+    <script>
+        $('#viewer1').imgadd({
+            tnWidth: '120px',
+            tnHeight: '120px',
+            fontSize: '55px',
+            plusInnerHtml: '',
+            plusBtnClass: undefined
+        });
+    </script>
+}
