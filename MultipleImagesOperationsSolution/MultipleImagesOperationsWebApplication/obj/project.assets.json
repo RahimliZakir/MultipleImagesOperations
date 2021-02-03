@@ -8970,11 +8970,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\User\\source\\repos\\MultipleImagesOperations\\MultipleImagesOperationsSolution\\MultipleImagesOperationsWebApplication\\MultipleImagesOperationsWebApplication.csproj",
+      "projectUniqueName": "C:\\Users\\User\\source\\repos\\Ready\\ASP.Net Core MVC\\MultipleImagesOperations\\MultipleImagesOperationsSolution\\MultipleImagesOperationsWebApplication\\MultipleImagesOperationsWebApplication.csproj",
       "projectName": "MultipleImagesOperationsWebApplication",
-      "projectPath": "C:\\Users\\User\\source\\repos\\MultipleImagesOperations\\MultipleImagesOperationsSolution\\MultipleImagesOperationsWebApplication\\MultipleImagesOperationsWebApplication.csproj",
+      "projectPath": "C:\\Users\\User\\source\\repos\\Ready\\ASP.Net Core MVC\\MultipleImagesOperations\\MultipleImagesOperationsSolution\\MultipleImagesOperationsWebApplication\\MultipleImagesOperationsWebApplication.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\User\\source\\repos\\MultipleImagesOperations\\MultipleImagesOperationsSolution\\MultipleImagesOperationsWebApplication\\obj\\",
+      "outputPath": "C:\\Users\\User\\source\\repos\\Ready\\ASP.Net Core MVC\\MultipleImagesOperations\\MultipleImagesOperationsSolution\\MultipleImagesOperationsWebApplication\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
